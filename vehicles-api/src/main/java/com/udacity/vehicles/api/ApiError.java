@@ -1,11 +1,14 @@
 package com.udacity.vehicles.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import springfox.documentation.annotations.ApiIgnore;
+
 import java.util.List;
 
 /**
  * Declares methods to return errors and other messages from the API.
  */
+@ApiIgnore
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class ApiError {
 

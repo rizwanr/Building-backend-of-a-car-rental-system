@@ -20,6 +20,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Implements a REST-based controller for the Vehicles API.
  */
+
 @RestController
 @RequestMapping("/cars")
 class CarController {
