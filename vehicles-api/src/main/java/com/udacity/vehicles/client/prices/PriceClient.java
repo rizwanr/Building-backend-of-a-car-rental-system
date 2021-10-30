@@ -30,12 +30,15 @@ public class PriceClient {
      *   error message that the vehicle ID is invalid, or note that the
      *   service is down.
      */
+
+//    http://localhost:8762/services/price?vehicleId=1
+
     public String getPrice(Long vehicleId) {
         try {
             Price price = client
                     .get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/prices/")
+                            .path("services/price/")
                             .queryParam("vehicleId", vehicleId)
                             .build()
                     )

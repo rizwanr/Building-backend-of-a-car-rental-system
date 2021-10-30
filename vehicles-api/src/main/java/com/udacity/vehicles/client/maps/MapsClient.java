@@ -1,12 +1,13 @@
 package com.udacity.vehicles.client.maps;
 
 import com.udacity.vehicles.domain.Location;
-import java.util.Objects;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Objects;
 
 /**
  * Implements a class to interface with the Maps Client for location data.
@@ -31,6 +32,7 @@ public class MapsClient {
      * @return An updated location including street, city, state and zip,
      *   or an exception message noting the Maps service is down
      */
+//    http://localhost:9191/maps?lat=40.73061&lon=-73.935242
     public Location getAddress(Location location) {
         try {
             Address address = client
@@ -44,6 +46,7 @@ public class MapsClient {
                     .retrieve().bodyToMono(Address.class).block();
 
             mapper.map(Objects.requireNonNull(address), location);
+
 
             return location;
         } catch (Exception e) {

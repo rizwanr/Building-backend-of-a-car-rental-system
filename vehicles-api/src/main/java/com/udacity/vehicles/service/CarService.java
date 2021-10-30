@@ -21,6 +21,10 @@ public class CarService {
     private final PriceClient priceClient;
     private final MapsClient mapsClient;
 
+
+
+
+
     public CarService(CarRepository repository, PriceClient priceClient, MapsClient mapsClient) {
         /**
          * TODO: Add the Maps and Pricing Web Clients you create
@@ -29,6 +33,8 @@ public class CarService {
         this.repository = repository;
         this.priceClient=priceClient;
         this.mapsClient=mapsClient;
+
+
     }
 
     /**
@@ -50,16 +56,18 @@ public class CarService {
          *   If it does not exist, throw a CarNotFoundException
          *   Remove the below code as part of your implementation.
          */
-        Optional<Car> optionalCar = repository.findById(id);
         Car car;
+        Optional<Car> optionalCar = repository.findById(id);
         if(optionalCar.isPresent()){
             car=optionalCar.get();
         }else{
             throw new CarNotFoundException();
         }
         car.setPrice(priceClient.getPrice(id));
+
         car.setLocation(mapsClient.getAddress(car.getLocation()));
         return car;
+
 
 
         /**
