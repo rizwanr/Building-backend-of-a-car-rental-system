@@ -211,29 +211,17 @@ public class CarControllerTest {
 
     @Test
     public void updateCar() throws Exception {
-        Car car = getCar();
-        car.setLocation(new Location(38.375172, 26.875061));
-        car.setCondition(Condition.NEW);
+        Car car = getUpdatedCar();
+
+
         when(carService.save(any(Car.class))).thenReturn(car);
         mvc.perform(put(new URI("/cars/1"))
                 .content(json.write(car).getJson())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.condition", is(Condition.NEW.name())));
-
-//
-//        mvc.perform(
-//                put(new URI("/cars/1"))
-//                        .content(json.write(car).getJson())
-//                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-//                        .accept(MediaType.APPLICATION_JSON_UTF8))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id", is(1)))
-//                .andExpect(jsonPath("$.details.body", is("toyota")));
-
-
-
+                .andExpect(jsonPath("$.condition", is(Condition.NEW.name())))
+                .andExpect(jsonPath("$.details.body",is("toyota")));
 
     }
 
@@ -261,30 +249,28 @@ public class CarControllerTest {
         return car;
     }
 
-    private Car getUpdatedCar(){
+    private Car getUpdatedCar() {
         Car car = new Car();
-        car.setLocation(new Location(50.730610, -63.935242));
+        car.setLocation(new Location(38.375172, 26.875061));
+        car.setCondition(Condition.NEW);
         Details details = new Details();
-        details.setEngine("396");
-        details.setModelYear(1969);
-        details.setManufacturer(new Manufacturer(0, "Chevy"));
-        car.setDetails(details);
-        car.setLocation(new Location(44.977753, -93.265015));
-        Manufacturer manufacturer = new Manufacturer(102, "Mazda");
+        Manufacturer manufacturer = new Manufacturer(102, "Toyota");
         details.setManufacturer(manufacturer);
-        details.setModel("3");
+        details.setModel("Test");
         details.setMileage(32280);
         details.setExternalColor("red");
         details.setBody("toyota");
         details.setEngine("3.6L V6");
         details.setFuelType("Gasoline");
-        details.setModelYear(2015);
-        details.setProductionYear(2015);
+        details.setModelYear(2021);
+        details.setProductionYear(2018);
         details.setNumberOfDoors(4);
         car.setDetails(details);
-        car.setCondition(Condition.NEW);
         return car;
     }
+
+
+
 
 
 }
