@@ -28,8 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -212,15 +211,26 @@ public class CarControllerTest {
 
     @Test
     public void updateCar() throws Exception {
-        Car car = getUpdatedCar();
-        mvc.perform(
-                put(new URI("/cars/1"))
-                        .content(json.write(car).getJson())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details.body", is("toyota")));
+        Car car = getCar();
+        car.setLocation(new Location(38.375172, 26.875061));
+        car.setCondition(Condition.NEW);
+        when(carService.save(any(Car.class))).thenReturn(car);
+        mvc.perform(put(new URI("/cars/1"))
+                .content(json.write(car).getJson())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().is(200))
+                .andExpect(jsonPath("$.condition", is(Condition.NEW.name())));
+
+//
+//        mvc.perform(
+//                put(new URI("/cars/1"))
+//                        .content(json.write(car).getJson())
+//                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                        .accept(MediaType.APPLICATION_JSON_UTF8))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id", is(1)))
+//                .andExpect(jsonPath("$.details.body", is("toyota")));
 
 
 
