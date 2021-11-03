@@ -10,6 +10,9 @@ import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.service.CarService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -20,7 +23,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.net.URI;
 import java.util.Collections;
 
@@ -41,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CarControllerTest {
 
     @Autowired
@@ -75,6 +78,7 @@ public class CarControllerTest {
      * @throws Exception when car creation fails in the system
      */
     @Test
+    @Order(1)
     public void createCar() throws Exception {
         Car car = getCar();
         mvc.perform(
@@ -90,20 +94,21 @@ public class CarControllerTest {
      * @throws Exception if the read operation of the vehicle list fails
      */
     @Test
+    @Order(2)
     public void listCars() throws Exception {
         /**
          * TODO: Add a test to check that the `get` method works by calling
          *   the whole list of vehicles. This should utilize the car from `getCar()`
          *   below (the vehicle will be the first in the list).
          */
-      mvc.perform(get("/cars"))
-              .andExpect(status().isOk())
-              .andExpect(jsonPath("$._embedded").exists())
-              .andExpect(jsonPath("$._embedded.carList", hasSize(1)))
-              .andExpect(jsonPath("$._embedded.carList[0].id", is(1)))
-              .andExpect(jsonPath("$._embedded.carList[0].condition", is(Condition.USED.name())));
+        mvc.perform(get("/cars"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded").exists())
+                .andExpect(jsonPath("$._embedded.carList", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.carList[0].id", is(1)))
+                .andExpect(jsonPath("$._embedded.carList[0].condition", is(Condition.USED.name())));
 
-      verify(carService,times(1)).list();
+        verify(carService,times(1)).list();
 
     }
 
@@ -164,6 +169,7 @@ public class CarControllerTest {
      * @throws Exception if the read operation for a single car fails
      */
     @Test
+    @Order(3)
     public void findCar() throws Exception {
         /**
          * TODO: Add a test to check that the `get` method works by calling
@@ -185,11 +191,14 @@ public class CarControllerTest {
 
 
 
+
+
     /**
      * Tests the deletion of a single car by ID.
      * @throws Exception if the delete operation of a vehicle fails
      */
     @Test
+    @Order(5)
     public void deleteCar() throws Exception {
         /**
          * TODO: Add a test to check whether a vehicle is appropriately deleted
@@ -200,6 +209,32 @@ public class CarControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(carService,times(1)).delete(1L);
+
+    }
+
+
+    @Test
+    @Order(4)
+    public void updateCar() throws Exception {
+        Car car = getUpdatedCar();
+        mvc.perform(
+                put(new URI("/cars/1"))
+                        .content(json.write(car).getJson())
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.condition", is(Condition.NEW.name())))
+                .andExpect(jsonPath("$.details.body", is("camerie")))
+                .andExpect(jsonPath("$.location.lat", is(50.730610)));
+
+//        mvc.perform(put(new URI("/cars/1"))
+//
+//                .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                .accept(MediaType.APPLICATION_JSON_UTF8))
+//                .andExpect(status().isOk());
+
+
+        verify(carService,times(1)).findById(1L);
 
     }
 
@@ -226,4 +261,26 @@ public class CarControllerTest {
         car.setCondition(Condition.USED);
         return car;
     }
+
+    private Car getUpdatedCar(){
+        Car car = new Car();
+        car.setLocation(new Location(50.730610, -63.935242));
+        Details details = new Details();
+        Manufacturer manufacturer = new Manufacturer(100, "Toyota");
+        details.setManufacturer(manufacturer);
+        details.setModel("Impala");
+        details.setMileage(42280);
+        details.setExternalColor("red");
+        details.setBody("camerie");
+        details.setEngine("3.6L V6");
+        details.setFuelType("Gasoline");
+        details.setModelYear(2020);
+        details.setProductionYear(2019);
+        details.setNumberOfDoors(4);
+        car.setDetails(details);
+        car.setCondition(Condition.NEW);
+        return car;
+    }
+
+
 }
