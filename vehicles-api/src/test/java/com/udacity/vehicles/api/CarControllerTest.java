@@ -212,8 +212,6 @@ public class CarControllerTest {
     @Test
     public void updateCar() throws Exception {
         Car car = getUpdatedCar();
-
-
         when(carService.save(any(Car.class))).thenReturn(car);
         mvc.perform(put(new URI("/cars/1"))
                 .content(json.write(car).getJson())
@@ -221,7 +219,8 @@ public class CarControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.condition", is(Condition.NEW.name())))
-                .andExpect(jsonPath("$.details.body",is("toyota")));
+                .andExpect(jsonPath("$.details.body",is("toyota")))
+                .andExpect(jsonPath("$.details.model", is("Test")));
 
     }
 
